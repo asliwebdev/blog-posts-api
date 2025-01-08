@@ -9,11 +9,13 @@ import (
 
 type Handler struct {
 	userService *service.UserService
+	postService *service.PostService
 }
 
-func NewHandler(userService *service.UserService) *Handler {
+func NewHandler(userService *service.UserService, postService *service.PostService) *Handler {
 	return &Handler{
 		userService: userService,
+		postService: postService,
 	}
 }
 
@@ -36,6 +38,17 @@ func Run(h *Handler) *gin.Engine {
 		userRoutes.GET("/:id", h.GetUserById)
 		userRoutes.PUT("/:id", h.UpdateUser)
 		userRoutes.DELETE("/:id", h.DeleteUser)
+	}
+
+	// POST ROUTES
+	postRoutes := router.Group("/posts")
+	{
+		postRoutes.POST("/", h.CreatePost)
+		postRoutes.GET("/feed", h.GetFeedPosts)
+		postRoutes.GET("/user/:id", h.GetUserPosts)
+		postRoutes.GET("/:id", h.GetPostById)
+		postRoutes.PUT("/:id", h.UpdatePost)
+		postRoutes.DELETE("/:id", h.DeletePost)
 	}
 
 	return router

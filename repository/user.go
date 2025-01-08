@@ -23,11 +23,8 @@ func (u *UserRepo) CreateUser(user *models.User) error {
 	_, err := u.DB.Exec(`INSERT INTO users (id, username, email, password)
 	 VALUES ($1, $2, $3, $4)`,
 		id, user.Username, user.Email, user.Password)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 func (u *UserRepo) GetUserByEmail(email string) (*models.User, error) {

@@ -7,11 +7,10 @@ import (
 )
 
 type Post struct {
-	ID        uuid.UUID `json:"id"`
-	UserID    uuid.UUID `json:"user_id"`
-	Title     string    `json:"title"`
-	Content   string    `json:"content"`
+	Id        uuid.UUID `json:"id"`
+	UserId    uuid.UUID `json:"user_id" binding:"required"`
+	Title     string    `json:"title" binding:"required"`
+	Content   string    `json:"content" binding:"required"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	User      User      `json:"user"`
 }

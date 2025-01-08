@@ -16,8 +16,9 @@ func main() {
 	defer db.Close()
 
 	userService := service.NewUserService(repository.NewUserRepo(db))
+	postService := service.NewPostService(repository.NewPostRepo(db))
 
-	h := handler.NewHandler(userService)
+	h := handler.NewHandler(userService, postService)
 
 	r := handler.Run(h)
 
