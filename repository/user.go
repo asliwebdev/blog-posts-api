@@ -17,11 +17,11 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 	return &UserRepo{DB: db}
 }
 
-func (u *UserRepo) CreateUser(user models.User) error {
+func (u *UserRepo) CreateUser(user *models.User) error {
 	id := uuid.NewString()
 
 	_, err := u.DB.Exec(`INSERT INTO users (id, username, email, password)
-	 VALUES ($1, $2, $3, $4, $5, $6)`,
+	 VALUES ($1, $2, $3, $4)`,
 		id, user.Username, user.Email, user.Password)
 	if err != nil {
 		return err

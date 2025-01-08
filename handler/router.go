@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"posts/middleware"
 	"posts/service"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +20,14 @@ func NewHandler(userService *service.UserService) *Handler {
 func Run(h *Handler) *gin.Engine {
 	router := gin.Default()
 
-	router.POST("/users", h.CreateUser)
+	// AUTH ROUTES
+	authRoutes := router.Group("/auth")
+	{
+		authRoutes.POST("/login", h.Login)
+		authRoutes.POST("/signup", h.SignUp)
+	}
+
+	router.Use(middleware.AuthMiddleware())
 
 	// USER ROUTES
 	userRoutes := router.Group("/users")

@@ -15,23 +15,6 @@ func NewUserService(userRepo *repository.UserRepo) *UserService {
 	return &UserService{userRepo: userRepo}
 }
 
-func (u *UserService) CreateUser(user models.User) error {
-	existingUser, err := u.userRepo.GetUserByEmailOrUsername(user.Email, user.Username)
-	if err != nil {
-		return err
-	}
-	if existingUser != nil {
-		if existingUser.Email == user.Email {
-			return fmt.Errorf("user with email %s already exists", user.Email)
-		}
-		if existingUser.Username == user.Username {
-			return fmt.Errorf("user with username %s already exists", user.Username)
-		}
-	}
-
-	return u.userRepo.CreateUser(user)
-}
-
 func (u *UserService) GetUserById(userId string) (*models.User, error) {
 	return u.userRepo.GetUserById(userId)
 }
