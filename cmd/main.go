@@ -18,8 +18,9 @@ func main() {
 	userService := service.NewUserService(repository.NewUserRepo(db))
 	postService := service.NewPostService(repository.NewPostRepo(db))
 	commentService := service.NewCommentService(repository.NewCommentRepo(db))
+	likeService := service.NewLikeService(repository.NewLikeRepo(db))
 
-	h := handler.NewHandler(userService, postService, commentService)
+	h := handler.NewHandler(userService, postService, commentService, likeService)
 
 	r := handler.Run(h)
 

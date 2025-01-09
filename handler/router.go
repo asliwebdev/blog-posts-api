@@ -11,13 +11,15 @@ type Handler struct {
 	userService    *service.UserService
 	postService    *service.PostService
 	commentService *service.CommentService
+	likeService    *service.LikeService
 }
 
-func NewHandler(userService *service.UserService, postService *service.PostService, commentService *service.CommentService) *Handler {
+func NewHandler(userService *service.UserService, postService *service.PostService, commentService *service.CommentService, likeService *service.LikeService) *Handler {
 	return &Handler{
 		userService:    userService,
 		postService:    postService,
 		commentService: commentService,
+		likeService:    likeService,
 	}
 }
 
@@ -54,12 +56,19 @@ func Run(h *Handler) *gin.Engine {
 	}
 
 	// COMMENT ROUTES
-	comments := router.Group("/comments")
+	commentRoutes := router.Group("/comments")
 	{
-		comments.POST("/", h.CreateComment)
-		comments.GET("/:post_id", h.GetCommentsByPostId)
-		comments.PUT("/", h.UpdateComment)
-		comments.DELETE("/:id", h.DeleteComment)
+		commentRoutes.POST("/", h.CreateComment)
+		commentRoutes.GET("/:post_id", h.GetCommentsByPostId)
+		commentRoutes.PUT("/", h.UpdateComment)
+		commentRoutes.DELETE("/:id", h.DeleteComment)
+	}
+
+	// LIKE ROUTES
+	LikeRoutes := router.Group("/likes")
+	{
+		LikeRoutes.POST("/toggle", h.ToggleLike)
+		LikeRoutes.GET("/users", h.GetLikedUsers)
 	}
 
 	return router
