@@ -21,7 +21,7 @@ CREATE TABLE comments (
     id UUID PRIMARY KEY,
     post_id UUID NOT NULL,
     user_id UUID NOT NULL,
-    parent_comment_id UUID, -- Null for top-level comments
+    parent_comment_id UUID NULL, -- Null for top-level comments
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

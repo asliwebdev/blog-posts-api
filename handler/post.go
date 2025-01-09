@@ -47,19 +47,9 @@ func (h *Handler) GetPostById(c *gin.Context) {
 }
 
 func (h *Handler) GetFeedPosts(c *gin.Context) {
-	value, exists := c.Get("userId")
-	if !exists {
-		c.JSON(400, gin.H{"error": "userId not found"})
-		return
-	}
+	userId := c.GetString("userId")
 
-	userId, err := uuid.Parse(value.(string))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User Id from token"})
-		return
-	}
-
-	posts, err := h.postService.GetFeedPosts(userId)
+	posts, err := h.postService.GetFeedPosts(uuid.MustParse(userId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
