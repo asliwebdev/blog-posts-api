@@ -12,14 +12,16 @@ type Handler struct {
 	postService    *service.PostService
 	commentService *service.CommentService
 	likeService    *service.LikeService
+	followService  *service.FollowerService
 }
 
-func NewHandler(userService *service.UserService, postService *service.PostService, commentService *service.CommentService, likeService *service.LikeService) *Handler {
+func NewHandler(userService *service.UserService, postService *service.PostService, commentService *service.CommentService, likeService *service.LikeService, followService *service.FollowerService) *Handler {
 	return &Handler{
 		userService:    userService,
 		postService:    postService,
 		commentService: commentService,
 		likeService:    likeService,
+		followService:  followService,
 	}
 }
 
@@ -65,11 +67,17 @@ func Run(h *Handler) *gin.Engine {
 	}
 
 	// LIKE ROUTES
-	LikeRoutes := router.Group("/likes")
+	likeRoutes := router.Group("/likes")
 	{
-		LikeRoutes.POST("/toggle", h.ToggleLike)
-		LikeRoutes.GET("/users", h.GetLikedUsers)
+		likeRoutes.POST("/toggle", h.ToggleLike)
+		likeRoutes.GET("/users", h.GetLikedUsers)
 	}
+
+	// FOLLOW ROUTES
+	router.POST("/followers", h.AddFollower)
+	router.DELETE("/followers", h.RemoveFollower)
+	router.GET("/followers/:userId", h.GetFollowers)
+	router.GET("/following/:userId", h.GetFollowing)
 
 	return router
 }

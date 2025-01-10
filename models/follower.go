@@ -7,8 +7,13 @@ import (
 )
 
 type Follower struct {
-	ID          uuid.UUID `json:"id"`
-	FollowerID  uuid.UUID `json:"follower_id"`
-	FollowingID uuid.UUID `json:"following_id"`
+	Id          uuid.UUID `json:"id"`
+	FollowerId  uuid.UUID `json:"follower_id"`
+	FollowingId uuid.UUID `json:"following_id"`
 	CreatedAt   time.Time `json:"created_at"`
+}
+
+type FollowRequest struct {
+	FollowerId  uuid.UUID `json:"follower_id" binding:"required"`
+	FollowingId uuid.UUID `json:"following_id" binding:"required"`
 }

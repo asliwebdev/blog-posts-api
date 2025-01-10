@@ -23,7 +23,7 @@ func (h *Handler) CreateComment(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, comment)
+	c.JSON(http.StatusCreated, gin.H{"comment": comment})
 }
 
 func (h *Handler) GetCommentsByPostId(c *gin.Context) {
@@ -57,7 +57,7 @@ func (h *Handler) UpdateComment(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, comment)
+	c.JSON(http.StatusOK, gin.H{"comment": comment})
 }
 
 func (h *Handler) DeleteComment(c *gin.Context) {
