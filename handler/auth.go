@@ -26,7 +26,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, gin.H{"token": token, "userId": credentials.Id})
 }
 
 func (h *Handler) SignUp(c *gin.Context) {
@@ -50,5 +50,6 @@ func (h *Handler) SignUp(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "User created successfully",
 		"token":   token,
+		"userId":  user.Id,
 	})
 }

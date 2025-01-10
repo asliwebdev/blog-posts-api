@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"posts/models"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,11 +19,11 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 }
 
 func (u *UserRepo) CreateUser(user *models.User) error {
-	id := uuid.NewString()
+	user.Id = uuid.New()
 
 	_, err := u.DB.Exec(`INSERT INTO users (id, username, email, password)
 	 VALUES ($1, $2, $3, $4)`,
-		id, user.Username, user.Email, user.Password)
+		user.Id, user.Username, user.Email, user.Password)
 
 	return err
 }
@@ -54,7 +55,7 @@ func (u *UserRepo) GetUserByEmailOrUsername(email, username string) (*models.Use
 	return user, nil
 }
 
-func (u *UserRepo) GetUserById(userId string) (*models.User, error) {
+func (u *UserRepo) GetUserById(userId uuid.UUID) (*models.User, error) {
 	user := &models.User{}
 	err := u.DB.QueryRow(`SELECT id, username, email, password, created_at, updated_at FROM users WHERE id = $1`, userId).
 		Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.CreatedAt, &user.UpdatedAt)
@@ -84,7 +85,7 @@ func (u *UserRepo) GetAllUsers() ([]models.User, error) {
 	return users, nil
 }
 
-func (u *UserRepo) UserExists(userId string) (bool, error) {
+func (u *UserRepo) UserExists(userId uuid.UUID) (bool, error) {
 	var exists bool
 	err := u.DB.QueryRow(`SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)`, userId).Scan(&exists)
 	if err != nil {
@@ -93,17 +94,28 @@ func (u *UserRepo) UserExists(userId string) (bool, error) {
 	return exists, nil
 }
 
-func (u *UserRepo) UpdateUser(id string, user models.User) error {
-	_, err := u.DB.Exec(`UPDATE users SET username = $1, email = $2, password = $3, updated_at = $4 WHERE id = $5`,
-		user.Username, user.Email, user.Password, time.Now(), id)
+func (u *UserRepo) UpdateUser(user *models.UpdateUser) error {
+	query := `UPDATE users SET username = $1, email = $2, updated_at = $3`
+
+	updateValues := []interface{}{user.Username, user.Email, time.Now()}
+
+	if user.Password != "" {
+		query += ", password = $4"
+		updateValues = append(updateValues, user.Password)
+	}
+
+	query += " WHERE id = $" + strconv.Itoa(len(updateValues)+1)
+	updateValues = append(updateValues, user.Id)
+
+	_, err := u.DB.Exec(query, updateValues...)
 	if err != nil {
 		return fmt.Errorf("error updating user: %w", err)
 	}
 	return nil
 }
 
-func (u *UserRepo) DeleteUser(userID string) error {
-	_, err := u.DB.Exec(`DELETE FROM users WHERE id = $1`, userID)
+func (u *UserRepo) DeleteUser(userId uuid.UUID) error {
+	_, err := u.DB.Exec(`DELETE FROM users WHERE id = $1`, userId)
 	if err != nil {
 		return fmt.Errorf("error deleting user: %w", err)
 	}

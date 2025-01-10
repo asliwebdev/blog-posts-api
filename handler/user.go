@@ -6,16 +6,18 @@ import (
 	"posts/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func (h *Handler) GetUserById(ctx *gin.Context) {
 	id := ctx.Param("id")
-	if id == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User Id is required"})
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User Id is not in the uuid type"})
 		return
 	}
 
-	user, err := h.userService.GetUserById(id)
+	user, err := h.userService.GetUserById(userId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -41,18 +43,26 @@ func (h *Handler) GetAllUsers(ctx *gin.Context) {
 
 func (h *Handler) UpdateUser(ctx *gin.Context) {
 	id := ctx.Param("id")
-	if id == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User Id is required"})
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User Id is not in the uuid type"})
 		return
 	}
 
-	user := models.User{}
+	user := models.UpdateUser{}
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid input: " + err.Error()})
 		return
 	}
 
-	err := h.userService.UpdateUser(id, user)
+	user.Id = userId
+
+	if user.Password != "" && len(user.Password) < 4 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Password length shouldn't be less than 4"})
+		return
+	}
+
+	err = h.userService.UpdateUser(&user)
 	if err != nil {
 		if err.Error() == "user not found" {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -62,17 +72,18 @@ func (h *Handler) UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+	ctx.JSON(http.StatusOK, gin.H{"message": "User updated successfully", "user": user})
 }
 
 func (h *Handler) DeleteUser(ctx *gin.Context) {
 	id := ctx.Param("id")
-	if id == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User Id is required"})
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User Id is not in the uuid type"})
 		return
 	}
 
-	err := h.userService.DeleteUser(id)
+	err = h.userService.DeleteUser(userId)
 	if err != nil {
 		if err.Error() == "user not found" {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

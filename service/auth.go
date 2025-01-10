@@ -31,6 +31,8 @@ func (u *UserService) Login(credentials *models.LoginRequest) (string, error) {
 		return "", err
 	}
 
+	credentials.Id = user.Id
+
 	return token, nil
 }
 

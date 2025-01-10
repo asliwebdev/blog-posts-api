@@ -33,24 +33,19 @@ func (r *FollowerRepo) RemoveFollower(followerId, followingId uuid.UUID) error {
 	return err
 }
 
-func (r *FollowerRepo) CountFollowers(userId uuid.UUID) (int, error) {
+func (r *FollowerRepo) CountFollowersAndFollowing(userId uuid.UUID) (int, int, error) {
 	query := `
-		SELECT COUNT(*) 
-		FROM followers 
-		WHERE following_id = $1`
-	var count int
-	err := r.db.QueryRow(query, userId).Scan(&count)
-	return count, err
-}
+		SELECT 
+			(SELECT COUNT(*) FROM followers WHERE following_id = $1) AS followers_count,
+			(SELECT COUNT(*) FROM followers WHERE follower_id = $1) AS following_count`
 
-func (r *FollowerRepo) CountFollowing(userId uuid.UUID) (int, error) {
-	query := `
-		SELECT COUNT(*) 
-		FROM followers 
-		WHERE follower_id = $1`
-	var count int
-	err := r.db.QueryRow(query, userId).Scan(&count)
-	return count, err
+	var followerCount, followingCount int
+	err := r.db.QueryRow(query, userId).Scan(&followerCount, &followingCount)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return followerCount, followingCount, nil
 }
 
 func (r *FollowerRepo) GetFollowers(userId uuid.UUID) ([]models.UserResponse, error) {

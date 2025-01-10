@@ -15,11 +15,13 @@ func main() {
 	}
 	defer db.Close()
 
-	userService := service.NewUserService(repository.NewUserRepo(db))
+	followRepo := repository.NewFollowerRepo(db)
+
+	userService := service.NewUserService(repository.NewUserRepo(db), followRepo)
 	postService := service.NewPostService(repository.NewPostRepo(db))
 	commentService := service.NewCommentService(repository.NewCommentRepo(db))
 	likeService := service.NewLikeService(repository.NewLikeRepo(db))
-	followService := service.NewFollowerService(repository.NewFollowerRepo(db))
+	followService := service.NewFollowerService(followRepo)
 
 	h := handler.NewHandler(userService, postService, commentService, likeService, followService)
 
