@@ -18,7 +18,7 @@ func NewCommentRepo(db *sql.DB) *CommentRepo {
 }
 
 func (r *CommentRepo) CreateComment(comment *models.Comment) error {
-	id := uuid.NewString()
+	id := uuid.New()
 	query := `
 		INSERT INTO comments (id, post_id, user_id, parent_comment_id, content) 
 		VALUES ($1, $2, $3, $4, $5)`

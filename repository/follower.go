@@ -16,7 +16,7 @@ func NewFollowerRepo(db *sql.DB) *FollowerRepo {
 }
 
 func (r *FollowerRepo) AddFollower(follower *models.FollowRequest) error {
-	id := uuid.NewString()
+	id := uuid.New()
 
 	query := `
 		INSERT INTO followers (id, follower_id, following_id)
