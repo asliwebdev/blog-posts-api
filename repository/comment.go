@@ -38,7 +38,8 @@ func (r *CommentRepo) GetCommentsByPostId(postId uuid.UUID) ([]models.Comment, e
 	query := `
 		SELECT 
 			c.id, c.post_id, c.user_id, c.parent_comment_id, c.content, c.created_at, c.updated_at, 
-			u.id, u.username, u.email 
+			u.id, u.username, u.email,
+			COALESCE((SELECT COUNT(*) FROM likes WHERE comment_id = c.id), 0) AS likes_count
 		FROM comments c
 		JOIN users u ON c.user_id = u.id
 		WHERE c.post_id = $1`
@@ -56,6 +57,7 @@ func (r *CommentRepo) GetCommentsByPostId(postId uuid.UUID) ([]models.Comment, e
 			&comment.Id, &comment.PostId, &comment.UserId, &comment.ParentCommentId, &comment.Content,
 			&comment.CreatedAt, &comment.UpdatedAt,
 			&user.Id, &user.Username, &user.Email,
+			&comment.LikesCount,
 		)
 		if err != nil {
 			return nil, err
@@ -106,4 +108,15 @@ func (r *CommentRepo) DeleteComment(commentId, userId uuid.UUID) error {
 	}
 
 	return nil
+}
+
+func (r *CommentRepo) CountComments(postId uuid.UUID) (int, error) {
+	query := `
+		SELECT COUNT(*) 
+		FROM comments 
+		WHERE post_id = $1`
+
+	var count int
+	err := r.db.QueryRow(query, postId).Scan(&count)
+	return count, err
 }

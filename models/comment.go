@@ -15,6 +15,7 @@ type Comment struct {
 	CreatedAt       time.Time    `json:"created_at"`
 	UpdatedAt       time.Time    `json:"updated_at"`
 	User            UserResponse `json:"user"`
+	LikesCount      int          `json:"likes_count"`
 }
 
 type UpdateComment struct {

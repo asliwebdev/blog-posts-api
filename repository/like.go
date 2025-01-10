@@ -29,23 +29,23 @@ func (r *LikeRepo) AddLike(like *models.Like) error {
 	return err
 }
 
-func (r *LikeRepo) CountLikes(postId, commentId uuid.UUID) (int, error) {
+func (r *LikeRepo) CountPostLikes(postId uuid.UUID) (int, error) {
 	query := `
 		SELECT COUNT(*) 
 		FROM likes 
-		WHERE post_id = $1 OR comment_id = $2`
+		WHERE post_id = $1`
 
 	var count int
-	err := r.db.QueryRow(query, postId, commentId).Scan(&count)
+	err := r.db.QueryRow(query, postId).Scan(&count)
 	return count, err
 }
 
-func (r *LikeRepo) DeleteLike(userID, postID, commentID uuid.UUID) error {
+func (r *LikeRepo) DeleteLike(userId, postId, commentId uuid.UUID) error {
 	query := `
 		DELETE FROM likes
 		WHERE user_id = $1 AND (post_id = $2 OR comment_id = $3)`
 
-	_, err := r.db.Exec(query, userID, postID, commentID)
+	_, err := r.db.Exec(query, userId, postId, commentId)
 	return err
 }
 

@@ -61,7 +61,7 @@ func Run(h *Handler) *gin.Engine {
 	commentRoutes := router.Group("/comments")
 	{
 		commentRoutes.POST("/", h.CreateComment)
-		commentRoutes.GET("/:post_id", h.GetCommentsByPostId)
+		commentRoutes.GET("/:postId", h.GetCommentsByPostId)
 		commentRoutes.PUT("/", h.UpdateComment)
 		commentRoutes.DELETE("/:id", h.DeleteComment)
 	}

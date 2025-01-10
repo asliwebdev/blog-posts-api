@@ -19,7 +19,7 @@ func NewPostRepo(db *sql.DB) *PostRepo {
 }
 
 func (p *PostRepo) CreatePost(post *models.Post) error {
-	id := uuid.NewString()
+	id := uuid.New()
 
 	query := `INSERT INTO posts (id, user_id, title, content) VALUES ($1, $2, $3, $4)`
 	_, err := p.db.Exec(query, id, post.UserId, post.Title, post.Content)

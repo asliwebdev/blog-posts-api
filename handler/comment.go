@@ -27,7 +27,7 @@ func (h *Handler) CreateComment(c *gin.Context) {
 }
 
 func (h *Handler) GetCommentsByPostId(c *gin.Context) {
-	postId, err := uuid.Parse(c.Param("post_id"))
+	postId, err := uuid.Parse(c.Param("postId"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid post Id"})
 		return
