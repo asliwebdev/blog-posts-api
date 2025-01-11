@@ -15,6 +15,6 @@ type Like struct {
 }
 
 type ToggleLikeRequest struct {
-	PostId    uuid.UUID `json:"post_id,omitempty"`
-	CommentId uuid.UUID `json:"comment_id,omitempty"`
+	PostId    uuid.UUID `json:"post_id,omitempty" binding:"omitempty,uuid"`
+	CommentId uuid.UUID `json:"comment_id,omitempty" binding:"omitempty,uuid"`
 }

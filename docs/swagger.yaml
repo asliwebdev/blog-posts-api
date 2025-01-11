@@ -53,6 +53,16 @@ definitions:
       error:
         type: string
     type: object
+  models.FollowRequest:
+    properties:
+      follower_id:
+        type: string
+      following_id:
+        type: string
+    required:
+    - follower_id
+    - following_id
+    type: object
   models.LoginRequest:
     properties:
       email:
@@ -131,6 +141,13 @@ definitions:
       token:
         type: string
       userId:
+        type: string
+    type: object
+  models.ToggleLikeRequest:
+    properties:
+      comment_id:
+        type: string
+      post_id:
         type: string
     type: object
   models.UpdateComment:
@@ -456,6 +473,203 @@ paths:
       summary: Get comments by post ID
       tags:
       - comments
+  /followers:
+    delete:
+      consumes:
+      - application/json
+      description: Removes a follower from a user
+      parameters:
+      - description: Follower ID
+        in: query
+        name: follower_id
+        required: true
+        type: string
+      - description: Following ID
+        in: query
+        name: following_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Follower removed'
+          schema:
+            $ref: '#/definitions/models.MessageResp'
+        "400":
+          description: 'error: Missing or invalid parameters'
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "500":
+          description: 'error: Failed to remove follower'
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+      security:
+      - BearerAuth: []
+      summary: Remove a follower
+      tags:
+      - followers
+    post:
+      consumes:
+      - application/json
+      description: Adds a follower to a user
+      parameters:
+      - description: Follow Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.FollowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Follower added'
+          schema:
+            $ref: '#/definitions/models.MessageResp'
+        "400":
+          description: 'error: Invalid request'
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "500":
+          description: 'error: Failed to add follower'
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+      security:
+      - BearerAuth: []
+      summary: Add a follower
+      tags:
+      - followers
+  /followers/{userId}:
+    get:
+      description: Retrieves the list of followers for a user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserResponse'
+            type: array
+        "400":
+          description: 'error: Invalid userId'
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "500":
+          description: 'error: Failed to fetch followers'
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+      security:
+      - BearerAuth: []
+      summary: Get followers
+      tags:
+      - followers
+  /following/{userId}:
+    get:
+      description: Retrieves the list of users a user is following
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserResponse'
+            type: array
+        "400":
+          description: 'error: Invalid userId'
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "500":
+          description: 'error: Failed to fetch following'
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+      security:
+      - BearerAuth: []
+      summary: Get following
+      tags:
+      - followers
+  /likes/toggle:
+    post:
+      consumes:
+      - application/json
+      description: Toggle like on a post or a comment
+      parameters:
+      - description: Toggle Like Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ToggleLikeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Like toggled successfully
+          schema:
+            $ref: '#/definitions/models.MessageResp'
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "500":
+          description: Failed to toggle like
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+      security:
+      - BearerAuth: []
+      summary: Toggle like
+      tags:
+      - likes
+  /likes/users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of users who liked a post or a comment
+      parameters:
+      - description: Post ID
+        in: query
+        name: postId
+        type: string
+      - description: Comment ID
+        in: query
+        name: commentId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users who liked
+          schema:
+            items:
+              $ref: '#/definitions/models.UserResponse'
+            type: array
+        "400":
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "500":
+          description: Failed to get users who liked
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+      security:
+      - BearerAuth: []
+      summary: Get liked users
+      tags:
+      - likes
   /posts:
     post:
       consumes:

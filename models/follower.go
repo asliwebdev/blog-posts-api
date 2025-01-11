@@ -14,6 +14,6 @@ type Follower struct {
 }
 
 type FollowRequest struct {
-	FollowerId  uuid.UUID `json:"follower_id" binding:"required"`
-	FollowingId uuid.UUID `json:"following_id" binding:"required"`
+	FollowerId  uuid.UUID `json:"follower_id" binding:"required,uuid"`
+	FollowingId uuid.UUID `json:"following_id" binding:"required,uuid"`
 }

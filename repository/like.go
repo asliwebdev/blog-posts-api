@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"posts/models"
 
 	"github.com/google/uuid"
@@ -20,10 +19,6 @@ func (r *LikeRepo) AddLike(like *models.Like) error {
 	query := `
 		INSERT INTO likes (id, user_id, post_id, comment_id)
 		VALUES ($1, $2, $3, $4)`
-
-	if like.PostId != uuid.Nil && like.CommentId != uuid.Nil {
-		return fmt.Errorf("a like cannot be associated with both a post and a comment")
-	}
 
 	_, err := r.db.Exec(query, like.Id, like.UserId, like.PostId, like.CommentId)
 	return err
