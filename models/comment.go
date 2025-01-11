@@ -18,8 +18,19 @@ type Comment struct {
 	LikesCount      int          `json:"likes_count"`
 }
 
+type CreateComment struct {
+	PostId          uuid.UUID `json:"post_id" binding:"required"`
+	ParentCommentId uuid.UUID `json:"parent_comment_id,omitempty"`
+	Content         string    `json:"content" binding:"required"`
+}
+
 type UpdateComment struct {
 	Id      uuid.UUID `json:"id" binding:"required,uuid"`
 	Content string    `json:"content" binding:"required"`
 	UserId  uuid.UUID `json:"user_id"`
+}
+
+type UpdateCommentSwag struct {
+	Id      uuid.UUID `json:"id" binding:"required,uuid"`
+	Content string    `json:"content" binding:"required"`
 }

@@ -8,8 +8,21 @@ import (
 	"github.com/google/uuid"
 )
 
+// CreatePost godoc
+//
+//	@Summary		Create a new post
+//	@Description	Creates a new post with the provided details.
+//	@Tags			posts
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			request	body		models.CreatePost	true	"Post creation payload"
+//	@Success		201		{object}	models.MessageResp	"Post created successfully"
+//	@Failure		400		{object}	models.ErrResp		"Invalid input"
+//	@Failure		500		{object}	models.ErrResp		"Internal server error"
+//	@Security		BearerAuth
+//	@Router			/posts [post]
 func (h *Handler) CreatePost(c *gin.Context) {
-	var post models.Post
+	var post models.CreatePost
 
 	if err := c.ShouldBindJSON(&post); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
@@ -25,6 +38,19 @@ func (h *Handler) CreatePost(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Post created successfully"})
 }
 
+// GetPostById godoc
+//
+//	@Summary		Get a post by ID
+//	@Description	Fetches the details of a post using its unique ID.
+//	@Tags			posts
+//	@Produce		application/json
+//	@Param			id		path		string	true	"Post ID (UUID)"
+//	@Success		200		{object}	models.Post		"Post details"
+//	@Failure		400		{object}	models.ErrResp	"Invalid post ID"
+//	@Failure		404		{object}	models.ErrResp	"Post not found"
+//	@Failure		500		{object}	models.ErrResp	"Internal server error"
+//	@Security		BearerAuth
+//	@Router			/posts/{id} [get]
 func (h *Handler) GetPostById(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)
@@ -43,9 +69,19 @@ func (h *Handler) GetPostById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"post": post})
+	c.JSON(http.StatusOK, post)
 }
 
+// GetFeedPosts godoc
+//
+//	@Summary		Get feed posts
+//	@Description	Fetches posts for the authenticated user's feed.
+//	@Tags			posts
+//	@Produce		application/json
+//	@Success		200		{array}		models.PostWithoutCounts		"List of feed posts"
+//	@Failure		500		{object}	models.ErrResp	"Internal server error"
+//	@Security		BearerAuth
+//	@Router			/posts/feed [get]
 func (h *Handler) GetFeedPosts(c *gin.Context) {
 	userId := c.GetString("userId")
 
@@ -55,9 +91,21 @@ func (h *Handler) GetFeedPosts(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"posts": posts})
+	c.JSON(http.StatusOK, posts)
 }
 
+// GetUserPosts godoc
+//
+//	@Summary		Get a user's posts
+//	@Description	Fetches all posts created by a specific user.
+//	@Tags			posts
+//	@Produce		application/json
+//	@Param			id		path		string	true	"User ID (UUID)"
+//	@Success		200		{array}		models.PostWithoutCounts		"List of user's posts"
+//	@Failure		400		{object}	models.ErrResp	"Invalid user ID"
+//	@Failure		500		{object}	models.ErrResp	"Internal server error"
+//	@Security		BearerAuth
+//	@Router			/posts/user/{id} [get]
 func (h *Handler) GetUserPosts(c *gin.Context) {
 	idParam := c.Param("id")
 	userId, err := uuid.Parse(idParam)
@@ -72,9 +120,24 @@ func (h *Handler) GetUserPosts(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"posts": posts})
+	c.JSON(http.StatusOK, posts)
 }
 
+// UpdatePost godoc
+//
+//	@Summary		Update a post
+//	@Description	Updates the details of a post using its unique ID.
+//	@Tags			posts
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			id		path		string			true	"Post ID (UUID)"
+//	@Param			request	body		models.UpdatePost	true	"Post update payload"
+//	@Success		200		{object}	models.MessageResp	"Post updated successfully"
+//	@Failure		400		{object}	models.ErrResp	"Invalid input or post ID"
+//	@Failure		404		{object}	models.ErrResp	"Post not found"
+//	@Failure		500		{object}	models.ErrResp	"Internal server error"
+//	@Security		BearerAuth
+//	@Router			/posts/{id} [put]
 func (h *Handler) UpdatePost(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)
@@ -103,6 +166,19 @@ func (h *Handler) UpdatePost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Post updated successfully"})
 }
 
+// DeletePost godoc
+//
+//	@Summary		Delete a post
+//	@Description	Deletes a post using its unique ID.
+//	@Tags			posts
+//	@Produce		application/json
+//	@Param			id		path		string	true	"Post ID (UUID)"
+//	@Success		200		{object}	models.MessageResp	"Post deleted successfully"
+//	@Failure		400		{object}	models.ErrResp	"Invalid post ID"
+//	@Failure		404		{object}	models.ErrResp	"Post not found"
+//	@Failure		500		{object}	models.ErrResp	"Internal server error"
+//	@Security		BearerAuth
+//	@Router			/posts/{id} [delete]
 func (h *Handler) DeletePost(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)

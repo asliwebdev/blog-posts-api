@@ -67,16 +67,16 @@ func (u *UserRepo) GetUserById(userId uuid.UUID) (*models.User, error) {
 	return user, nil
 }
 
-func (u *UserRepo) GetAllUsers() ([]models.User, error) {
+func (u *UserRepo) GetAllUsers() ([]models.UserWithoutCounts, error) {
 	rows, err := u.DB.Query(`SELECT id, username, email, password, created_at, updated_at FROM users`)
 	if err != nil {
 		return nil, fmt.Errorf("error querying all users: %w", err)
 	}
 	defer rows.Close()
 
-	var users []models.User
+	var users []models.UserWithoutCounts
 	for rows.Next() {
-		user := models.User{}
+		user := models.UserWithoutCounts{}
 		if err := rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("error scanning user: %w", err)
 		}

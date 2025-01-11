@@ -17,7 +17,7 @@ func NewPostService(postRepo *repository.PostRepo, likeRepo *repository.LikeRepo
 	return &PostService{postRepo: postRepo, likeRepo: likeRepo, commentRepo: commentRepo}
 }
 
-func (s *PostService) CreatePost(post *models.Post) error {
+func (s *PostService) CreatePost(post *models.CreatePost) error {
 	return s.postRepo.CreatePost(post)
 }
 
@@ -43,11 +43,11 @@ func (s *PostService) GetPostById(postId uuid.UUID) (*models.Post, error) {
 	return post, nil
 }
 
-func (s *PostService) GetUserPosts(userId uuid.UUID) ([]models.Post, error) {
+func (s *PostService) GetUserPosts(userId uuid.UUID) ([]models.PostWithoutCounts, error) {
 	return s.postRepo.GetUserPosts(userId)
 }
 
-func (s *PostService) GetFeedPosts(userId uuid.UUID) ([]models.Post, error) {
+func (s *PostService) GetFeedPosts(userId uuid.UUID) ([]models.PostWithoutCounts, error) {
 	return s.postRepo.GetFeedPosts(userId)
 }
 

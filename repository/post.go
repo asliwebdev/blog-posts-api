@@ -18,7 +18,7 @@ func NewPostRepo(db *sql.DB) *PostRepo {
 	return &PostRepo{db: db}
 }
 
-func (p *PostRepo) CreatePost(post *models.Post) error {
+func (p *PostRepo) CreatePost(post *models.CreatePost) error {
 	id := uuid.New()
 
 	query := `INSERT INTO posts (id, user_id, title, content) VALUES ($1, $2, $3, $4)`
@@ -40,7 +40,7 @@ func (p *PostRepo) GetPostById(id uuid.UUID) (*models.Post, error) {
 	return post, nil
 }
 
-func (p *PostRepo) GetUserPosts(userId uuid.UUID) ([]models.Post, error) {
+func (p *PostRepo) GetUserPosts(userId uuid.UUID) ([]models.PostWithoutCounts, error) {
 	query := `SELECT id, user_id, title, content, created_at, updated_at FROM posts WHERE user_id = $1`
 	rows, err := p.db.Query(query, userId)
 	if err != nil {
@@ -48,9 +48,9 @@ func (p *PostRepo) GetUserPosts(userId uuid.UUID) ([]models.Post, error) {
 	}
 	defer rows.Close()
 
-	var posts []models.Post
+	var posts []models.PostWithoutCounts
 	for rows.Next() {
-		post := models.Post{}
+		post := models.PostWithoutCounts{}
 		if err := rows.Scan(&post.Id, &post.UserId, &post.Title, &post.Content, &post.CreatedAt, &post.UpdatedAt); err != nil {
 			return nil, err
 		}
@@ -60,7 +60,7 @@ func (p *PostRepo) GetUserPosts(userId uuid.UUID) ([]models.Post, error) {
 	return posts, nil
 }
 
-func (p *PostRepo) GetFeedPosts(userId uuid.UUID) ([]models.Post, error) {
+func (p *PostRepo) GetFeedPosts(userId uuid.UUID) ([]models.PostWithoutCounts, error) {
 	query := `SELECT id, user_id, title, content, created_at, updated_at 
               FROM posts 
               WHERE user_id != $1 
@@ -71,9 +71,9 @@ func (p *PostRepo) GetFeedPosts(userId uuid.UUID) ([]models.Post, error) {
 	}
 	defer rows.Close()
 
-	var posts []models.Post
+	var posts []models.PostWithoutCounts
 	for rows.Next() {
-		post := models.Post{}
+		post := models.PostWithoutCounts{}
 		if err := rows.Scan(&post.Id, &post.UserId, &post.Title, &post.Content, &post.CreatedAt, &post.UpdatedAt); err != nil {
 			return nil, err
 		}

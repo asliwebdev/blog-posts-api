@@ -36,7 +36,7 @@ func (u *UserService) GetUserById(userId uuid.UUID) (*models.User, error) {
 	return user, nil
 }
 
-func (u *UserService) GetAllUsers() ([]models.User, error) {
+func (u *UserService) GetAllUsers() ([]models.UserWithoutCounts, error) {
 	return u.userRepo.GetAllUsers()
 }
 

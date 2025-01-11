@@ -8,6 +8,19 @@ import (
 	"github.com/google/uuid"
 )
 
+// @Summary Create a new comment
+// @Description Create a comment for a specific post
+// @Tags comments
+// @Accept application/json
+// @Produce application/json
+// @Param request body models.CreateComment true "Comment body"
+// @Success 201 {object} models.MessageResp
+// @Failure 400 {object} models.ErrResp "Invalid input"
+// @Failure 500 {object} models.ErrResp "Failed to create comment"
+//
+//	@Security		BearerAuth
+//
+// @Router /comments [post]
 func (h *Handler) CreateComment(c *gin.Context) {
 	userId := c.GetString("userId")
 	var comment models.Comment
@@ -23,9 +36,21 @@ func (h *Handler) CreateComment(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"comment": comment})
+	c.JSON(http.StatusCreated, gin.H{"message": "Comment created successfully"})
 }
 
+// @Summary Get comments by post ID
+// @Description Retrieve all comments associated with a post
+// @Tags comments
+// @Produce application/json
+// @Param postId path string true "Post ID"
+// @Success 200 {array} models.Comment
+// @Failure 400 {object} models.ErrResp "Invalid post ID"
+// @Failure 500 {object} models.ErrResp "Failed to fetch comments"
+//
+//	@Security		BearerAuth
+//
+// @Router /comments/{postId} [get]
 func (h *Handler) GetCommentsByPostId(c *gin.Context) {
 	postId, err := uuid.Parse(c.Param("postId"))
 	if err != nil {
@@ -39,9 +64,22 @@ func (h *Handler) GetCommentsByPostId(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"comments": comments})
+	c.JSON(http.StatusOK, comments)
 }
 
+// @Summary Update a comment
+// @Description Update the content of an existing comment
+// @Tags comments
+// @Accept application/json
+// @Produce application/json
+// @Param request body models.UpdateCommentSwag true "Updated comment data"
+// @Success 200 {object} models.UpdateComment
+// @Failure 400 {object} models.ErrResp "Invalid input"
+// @Failure 500 {object} models.ErrResp "Failed to update comment"
+//
+//	@Security		BearerAuth
+//
+// @Router /comments [put]
 func (h *Handler) UpdateComment(c *gin.Context) {
 	userId := c.GetString("userId")
 	var comment models.UpdateComment
@@ -57,9 +95,21 @@ func (h *Handler) UpdateComment(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"comment": comment})
+	c.JSON(http.StatusOK, comment)
 }
 
+// DeleteComment deletes a comment
+// @Summary Delete a comment
+// @Description Delete a comment by its ID
+// @Tags comments
+// @Produce application/json
+// @Param id path string true "Comment ID"
+// @Success 200 {object} models.MessageResp "Comment deleted successfully"
+// @Failure 400 {object} models.ErrResp "Invalid comment ID"
+// @Failure 403 {object} models.ErrResp "Not authorized"
+// @Failure 500 {object} models.ErrResp "Failed to delete comment"
+// @Security BearerAuth
+// @Router /comments/{id} [delete]
 func (h *Handler) DeleteComment(c *gin.Context) {
 	commentId := c.Param("id")
 	userId := c.GetString("userId")
