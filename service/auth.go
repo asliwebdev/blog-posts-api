@@ -12,28 +12,31 @@ var (
 	ErrUserNameExist      = errors.New("user with this username already exists")
 )
 
-func (u *UserService) Login(credentials *models.LoginRequest) (string, error) {
+func (u *UserService) Login(credentials *models.LoginRequest) (models.LoginResponse, error) {
 	user, err := u.userRepo.GetUserByEmail(credentials.Email)
 	if err != nil {
-		return "", err
+		return models.LoginResponse{}, err
 	}
 
 	if user == nil {
-		return "", ErrInvalidCredentials
+		return models.LoginResponse{}, ErrInvalidCredentials
 	}
 
 	if err := pkg.ComparePasswords(user.Password, credentials.Password); err != nil {
-		return "", ErrInvalidCredentials
+		return models.LoginResponse{}, ErrInvalidCredentials
 	}
 
 	token, err := pkg.CreateToken(user.Username, user.Email, user.Id)
 	if err != nil {
-		return "", err
+		return models.LoginResponse{}, err
 	}
 
-	credentials.Id = user.Id
+	resp := models.LoginResponse{
+		Token: token,
+		Id:    user.Id,
+	}
 
-	return token, nil
+	return resp, nil
 }
 
 func (u *UserService) SignUp(user *models.User) (string, error) {

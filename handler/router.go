@@ -4,7 +4,11 @@ import (
 	"posts/middleware"
 	"posts/service"
 
+	_ "posts/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Handler struct {
@@ -27,6 +31,9 @@ func NewHandler(userService *service.UserService, postService *service.PostServi
 
 func Run(h *Handler) *gin.Engine {
 	router := gin.Default()
+
+	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
 	// AUTH ROUTES
 	authRoutes := router.Group("/auth")

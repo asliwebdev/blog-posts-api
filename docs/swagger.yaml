@@ -1,0 +1,127 @@
+definitions:
+  models.ErrResp:
+    properties:
+      error:
+        type: string
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 4
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.LoginResponse:
+    properties:
+      token:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.SignUpRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 4
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  models.SignUpResponse:
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+      userId:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: Blog Posts API
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user using their email and password, returning a
+        JWT token on success.
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful login response with token and user ID
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Invalid input format or missing fields
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "401":
+          description: Invalid email or password
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+      summary: User login
+      tags:
+      - auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account.
+      parameters:
+      - description: Sign-up details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SignUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "409":
+          description: Username or Email exist
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrResp'
+      summary: User sign-up
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    description: Testing Swagger APIs.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

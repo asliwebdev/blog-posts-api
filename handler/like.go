@@ -43,6 +43,11 @@ func (h *Handler) GetLikedUsers(c *gin.Context) {
 		return
 	}
 
+	if postIdStr != "" && commentIdStr != "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You should provide only one query Id post or comment not both"})
+		return
+	}
+
 	if postIdStr != "" {
 		postId, err = uuid.Parse(postIdStr)
 		if err != nil {

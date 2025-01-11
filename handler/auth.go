@@ -8,6 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Login godoc
+//
+//	@Summary		User login
+//	@Description	Authenticate a user using their email and password.
+//	@Tags			auth
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			request	body		models.LoginRequest	true	"Login credentials"
+//	@Success		200		{object}	models.LoginResponse	"Successful login response with token and user ID"
+//	@Failure		400		{object}	models.ErrResp		"Invalid input format or missing fields"
+//	@Failure		401		{object}	models.ErrResp		"Invalid email or password"
+//	@Failure		500		{object}	models.ErrResp		"Internal server error"
+//	@Router			/auth/login [post]
 func (h *Handler) Login(c *gin.Context) {
 	credentials := models.LoginRequest{}
 
@@ -16,7 +29,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := h.userService.Login(&credentials)
+	resp, err := h.userService.Login(&credentials)
 	if err != nil {
 		if err == service.ErrInvalidCredentials {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
@@ -26,9 +39,25 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token, "userId": credentials.Id})
+	c.JSON(http.StatusOK, gin.H{"token": resp.Token, "userId": resp.Id})
 }
 
+// SignUp godoc
+// @Summary User sign-up
+// @Description Creates a new user account.
+//
+//	@Tags			auth
+//
+// @Accept application/json
+// @Produce application/json
+// @Param request body models.SignUpRequest true "Sign-up details"
+// @Success 200 {object} models.SignUpResponse
+// @Failure 400 {object} models.ErrResp
+//
+//	@Failure		409		{object}	models.ErrResp		"Username or Email exist"
+//	@Failure		500		{object}	models.ErrResp		"Internal server error"
+//
+// @Router /auth/signup [post]
 func (h *Handler) SignUp(c *gin.Context) {
 	var user models.User
 
