@@ -19,7 +19,7 @@ func CreateToken(username, email string, userId uuid.UUID) (string, error) {
 		"iat":      time.Now().Unix(),
 	})
 
-	tokenString, err := claims.SignedString(config.SECRET_KEY)
+	tokenString, err := claims.SignedString([]byte(config.SECRET_KEY))
 	if err != nil {
 		return "", err
 	}
@@ -30,7 +30,7 @@ func CreateToken(username, email string, userId uuid.UUID) (string, error) {
 
 func VerifyToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return config.SECRET_KEY, nil
+		return []byte(config.SECRET_KEY), nil
 	})
 
 	if err != nil {

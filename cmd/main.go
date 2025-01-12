@@ -8,19 +8,6 @@ import (
 	"posts/service"
 )
 
-// Run ...
-// @title           Blog Posts API
-// @version         1.0
-// @description     Testing Swagger APIs.
-// @contact.name    API Support
-// @contact.url     http://www.swagger.io/support
-// @contact.email   support@swagger.io
-// @host            localhost:8080
-// @securityDefinitions.apikey BearerAuth
-// @scheme          bearer
-// @bearerFormat    JWT
-// @in              header
-// @name            Authorization
 func main() {
 	db, err := postgres.Connect()
 	if err != nil {

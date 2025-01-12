@@ -34,7 +34,7 @@ func (h *Handler) Login(c *gin.Context) {
 		if err == service.ErrInvalidCredentials {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 		return
 	}

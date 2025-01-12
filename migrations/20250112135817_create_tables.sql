@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE TABLE users (
     id UUID PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -56,21 +57,9 @@ CREATE TABLE followers (
     CONSTRAINT unique_follow UNIQUE (follower_id, following_id)
 );
 
-CREATE TABLE notifications (
-    id UUID PRIMARY KEY,
-    user_id UUID NOT NULL,         -- The user who will receive the notification
-    actor_id UUID NOT NULL,        -- The user who triggered the notification
-    post_id UUID,                  -- If related to a post
-    comment_id UUID,               -- If related to a comment
-    follow_id UUID,                -- If related to a follow action
-    type VARCHAR(50) NOT NULL,     -- e.g., "like", "comment", "follow", "system"
-    message TEXT,        
-    read BOOLEAN DEFAULT FALSE,    -- Whether the notification has been read
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (actor_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
-    FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE,
-    FOREIGN KEY (follow_id) REFERENCES followers (id) ON DELETE CASCADE
-);
+-- +goose Down
+DROP TABLE IF EXISTS followers;
+DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS users;

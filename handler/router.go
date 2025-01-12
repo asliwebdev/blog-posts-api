@@ -29,6 +29,20 @@ func NewHandler(userService *service.UserService, postService *service.PostServi
 	}
 }
 
+// Run ...
+// @title           Blog Posts API
+// @version         1.0
+// @description     Testing Swagger APIs.
+// @contact.name    API Support
+// @contact.url     http://www.swagger.io/support
+// @contact.email   support@swagger.io
+// @host            localhost:8080
+// @securityDefinitions.apikey BearerAuth
+// @in				header
+// @name			Authorization
+// @type 			apikey
+// @schema 			bearer
+// @bearerFormat	JWT
 func Run(h *Handler) *gin.Engine {
 	router := gin.Default()
 
