@@ -51,7 +51,7 @@ func (h *Handler) Login(c *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param request body models.SignUpRequest true "Sign-up details"
-// @Success 200 {object} models.SignUpResponse
+// @Success 201 {object} models.SignUpResponse
 // @Failure 400 {object} models.ErrResp
 //
 //	@Failure		409		{object}	models.ErrResp		"Username or Email exist"

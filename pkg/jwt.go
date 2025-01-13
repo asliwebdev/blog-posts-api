@@ -24,7 +24,6 @@ func CreateToken(username, email string, userId uuid.UUID) (string, error) {
 		return "", err
 	}
 
-	fmt.Printf("Token claims added: %+v\n", claims)
 	return tokenString, nil
 }
 

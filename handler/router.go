@@ -7,6 +7,7 @@ import (
 	_ "posts/docs"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -43,8 +44,10 @@ func NewHandler(userService *service.UserService, postService *service.PostServi
 // @type 			apikey
 // @schema 			bearer
 // @bearerFormat	JWT
-func Run(h *Handler) *gin.Engine {
+func Run(h *Handler, redisClient *redis.Client) *gin.Engine {
 	router := gin.Default()
+
+	router.Use(middleware.RateLimiterMiddleware(redisClient))
 
 	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
